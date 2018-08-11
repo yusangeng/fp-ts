@@ -1,15 +1,16 @@
-import { ReaderTaskEither, readerTaskEither } from '../src/ReaderTaskEither'
+import { ReaderTaskEither, readerTaskEither, right } from '../src/ReaderTaskEither'
 import { getApplicativeComposition } from '../src/Applicative'
 import { liftA2 } from '../src/Apply'
 import { array } from '../src/Array'
 import { Const, const_ } from '../src/Const'
-import { Either, either } from '../src/Either'
+import { Either, either, right as eitherRight, left as eitherLeft } from '../src/Either'
+import * as eithers from '../src/Either'
 import { Functor2C, Functor3C, lift } from '../src/Functor'
 import { getMonad as getIxIOMonad } from '../src/IxIO'
 import { Option, option, getRefinement, some, none } from '../src/Option'
 import * as optionT from '../src/OptionT'
 import { Reader, reader } from '../src/Reader'
-import { getArraySemigroup, semigroupString } from '../src/Semigroup'
+import { getArraySemigroup, semigroupString, semigroupSum, Semigroup } from '../src/Semigroup'
 import { task } from '../src/Task'
 import { getMonad as getTheseMonad } from '../src/These'
 import { sequence } from '../src/Traversable'
@@ -17,6 +18,7 @@ import { replicateA } from '../src/Unfoldable'
 import { Validation, getApplicative, validation } from '../src/Validation'
 import { taskify, TaskEither } from '../src/TaskEither'
 import { Type } from '../src/HKT'
+import { monoidSum, Monoid } from '../src/Monoid'
 
 type Equals<A, B> = [A] extends [B] ? ([B] extends [A] ? 'T' : 'F') : 'F'
 
@@ -113,3 +115,20 @@ const isA = getRefinement<C, A>(c => (c.type === 'B' ? some(c) : none))
 
 // $ExpectError Type '"a"' does not satisfy the constraint
 type HKT1 = Type<'a', string>
+
+// Either
+
+const rightOf5 = eitherRight(5)
+const rightOf5Type: Either<never, number> = rightOf5
+
+const leftOf5 = eitherLeft(5)
+const leftOf5Type: Either<number, never> = leftOf5
+
+const eitherNumberSemigroup = eithers.getSemigroup(semigroupSum)
+const eitherNumberSemigroupType: Semigroup<Either<never, number>> = eitherNumberSemigroup
+
+const eitherNumberApplySemigroup = eithers.getApplySemigroup(semigroupSum)
+const eitherNumberApplySemigroupType: Semigroup<Either<never, number>> = eitherNumberApplySemigroup
+
+const eitherNumberApplyMonoid = eithers.getApplyMonoid(monoidSum)
+const eitherNumberApplyMonoidType: Monoid<Either<never, number>> = eitherNumberApplyMonoid

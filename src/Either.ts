@@ -282,7 +282,9 @@ export const getSetoid = <L, A>(SL: Setoid<L>, SA: Setoid<A>): Setoid<Either<L, 
  * @function
  * @since 1.7.0
  */
-export const getSemigroup = <L, A>(S: Semigroup<A>): Semigroup<Either<L, A>> => {
+export const getSemigroup = <L = never, A = 'reason is you cannot partially bind Type Params'>(
+  S: Semigroup<A>
+): Semigroup<Either<L, A>> => {
   return {
     concat: (x, y) => (y.isLeft() ? x : x.isLeft() ? y : right(S.concat(x.value, y.value)))
   }
@@ -303,7 +305,9 @@ export const getSemigroup = <L, A>(S: Semigroup<A>): Semigroup<Either<L, A>> => 
  * @function
  * @since 1.7.0
  */
-export const getApplySemigroup = <L, A>(S: Semigroup<A>): Semigroup<Either<L, A>> => {
+export const getApplySemigroup = <L = never, A = 'reason is you cannot partially bind Type Params'>(
+  S: Semigroup<A>
+): Semigroup<Either<L, A>> => {
   return {
     concat: (x, y) => (x.isLeft() ? x : y.isLeft() ? y : right(S.concat(x.value, y.value)))
   }
@@ -313,7 +317,9 @@ export const getApplySemigroup = <L, A>(S: Semigroup<A>): Semigroup<Either<L, A>
  * @function
  * @since 1.7.0
  */
-export const getApplyMonoid = <L, A>(M: Monoid<A>): Monoid<Either<L, A>> => {
+export const getApplyMonoid = <L = never, A = 'reason is you cannot partially bind Type Params'>(
+  M: Monoid<A>
+): Monoid<Either<L, A>> => {
   return {
     ...getApplySemigroup(M),
     empty: right(M.empty)
@@ -324,7 +330,7 @@ const map = <L, A, B>(fa: Either<L, A>, f: (a: A) => B): Either<L, B> => {
   return fa.map(f)
 }
 
-const of = <L, A>(a: A): Either<L, A> => {
+const of = <L = never, A = 'reason is you cannot partially bind Type Params'>(a: A): Either<L, A> => {
   return new Right<L, A>(a)
 }
 
@@ -376,7 +382,7 @@ const chainRec = <L, A, B>(a: A, f: (a: A) => Either<L, Either<A, B>>): Either<L
  * @function
  * @since 1.0.0
  */
-export const left = <L, A>(l: L): Either<L, A> => {
+export const left = <L, A = never>(l: L): Either<L, A> => {
   return new Left(l)
 }
 
